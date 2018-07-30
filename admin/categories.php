@@ -1,8 +1,10 @@
 <?php 
   include_once "../function.php";
-  $connect = connect();
-  $sql = "select * from category";
-  $res = query($connect,$sql);  
+  $link = connect();
+  $sql = "SELECT * FROM category";
+  // print_r($link,$sql);=
+  // print_r($res);
+  
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -31,8 +33,13 @@
       </div>
       <!-- 有错误信息时展示 -->
       <div class="alert alert-danger">
-        <strong>错误！</strong>发生XXX错误
+        <strong>错误！</strong>填写内容发生错误
       </div>
+      <!-- 有错误信息时展示 -->
+      <!-- 有成功信息时展示 -->
+      <div class="alert alert-success">
+      </div>
+      <!-- 有成功信息时展示 -->
       <div class="row">
         <div class="col-md-4">
           <form action = "">
@@ -133,10 +140,24 @@
         </ul>
       </li>
     </ul>
-  </div>
+  </div>    
   <script src="/static/assets/vendors/jquery/jquery.js"></script>
   <script src="/static/assets/vendors/bootstrap/js/bootstrap.js"></script>
   <script>NProgress.done()</script>
+  <script src="../static/assets/vendors/art-template/template-web.js"></script>
+  <!-- 创建模板 -->
+  <script id="template" type="text/html">
+    <tr>
+      <td class="text-center"><input type="checkbox" value="{{insertid}}"></td>
+      <td>{{catname}}</td>
+      <td>{{classname}}</td>
+      <td class="text-center">
+        <a href="javascript:;" class="btn btn-info btn-xs">编辑</a>
+        <a href="javascript:;" class="delCat btn btn-danger btn-xs">删除</a>
+      </td>
+    </tr>
+  </script>
+  <!-- 创建模板 -->
   <script>
   //---------增-----------
   $('.btn-primary').on('click', function () {
@@ -147,21 +168,34 @@
     // console.log(slug);
     //验证
     if ($.trim(catName)==''||$.trim(slug)=='') {
-      console.log(123);
+      // console.log(123);
       $('.alert-danger').show();
+      // return;
+      // console.log(123);
     }else{
       $('.alert-danger').hide();
     };
+    
     //AJAX动态生成
-      $.post(
-        "../api/addCat.php",
-        {"cat_name" = catName,
-          "classname" = slug,
-        },
-        function (res) {
-          
+  $.post("../api/addCat.php", {"cat_name":catName,"classname":slug},
+    function (res) {
+      if (res.code == 200) {
+        //清空输入的内容
+          console.log(123);
+          $('.alert-danger').show().html('<strong>'+res.message+'</strong>');
+          $('#name').attr('placeholder','');
+          $('#slug').attr('placeholder','');
+        //拼接至表格中
+        var data = {
+          catname:catName,
+          classname:slug,
+          insertid = res.ins,
         }
-      ) 
+
+      }
+    },
+    "json"
+  );
   });
   </script>
 </body>

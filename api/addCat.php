@@ -1,11 +1,13 @@
 <?php 
     include_once "../function.php";
+    $connect = connect();
     //获取参数
+    
     $catName = $_POST["cat_name"];
     $slug = $_POST["classname"];
     //判断类名是否重复
-    $connect = connect();
-    $sql = "SELECT * FROM category WHERE cat_name = $catName";
+    
+    $sql = "SELECT * FROM category WHERE cat_name ='$catName'";
         //执行sql语句
         $selectRes = query($connect,$sql);
         //判断
@@ -18,7 +20,7 @@
             die();
         }
     //入库
-    $sql2 = "INSERT INTO category(cat_nameclassname) VALUES ('$cat_name','$classname')";
+    $sql2 = "INSERT INTO category(cat_name,classname) VALUES ('$catName','$slug')";
     $insertRes = mysqli_query($connect,$sql2);
     //返回数据
     if ($insertRes) {
